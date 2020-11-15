@@ -1,0 +1,65 @@
+@model AlocaGFT.ViewModels.PartialTecnologiaViewModel
+@{
+    var tecnologiasOptions = new SelectList(Model.TecnologiasCadastradas, "id", "nome");
+}
+
+@* ATENÇÃO, para funcionar, precisa do script 'tecnologia-partial.js' *@
+
+<div id="accordion">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseTecnologias"
+                    aria-expanded="true" aria-controls="collapseTecnologias">
+                    <i class="fas fa-rocket"></i> Tecnologias
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseTecnologias" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-sm">
+                        <label>Tecnologias</label>
+                        <div class="input-group mb-3">
+                            <select id="Tecnologias" asp-items="@tecnologiasOptions" class="form-control"></select>
+                            <div class="input-group-append">
+                                <button type="button" class="btn btn-primary" id="btnAdicionarTec">Adicionar</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-sm">
+                        <table class="table table-striped" id="tbTecnologias">
+                            <thead class="thead-dark">
+                                <tr>
+                                    <th>Nome</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.TecnologiasDaEntidade.Count; i++)
+                                {
+                                    Tecnologia tecnologia = Model.TecnologiasDaEntidade[i];
+
+                                    <tr>
+                                        <td>
+                                            <input type="hidden" class="tecnologia-id" name="TecnologiaIds[@i]"
+                                                value="@tecnologia.id">
+                                            <p id="tecnologia_nome_@(tecnologia.id)">@tecnologia.nome</p>
+                                        </td>
+                                        <td>
+                                            <button type="button" class="btn btn-danger excluir-tecnologia"
+                                                onclick="ExcluirTecnologia('@(tecnologia.id)');">Excluir</button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>

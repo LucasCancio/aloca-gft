@@ -1,0 +1,169 @@
+@model AlocaGFT.ViewModels.Alocacao.AlocacaoViewModel
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
+
+@{
+    ViewData["Title"]="Alocação de Vaga";
+    var partialParameters= new ViewDataDictionary(ViewData) { { "selecionar", true },{"versaoCurta", true} };
+}
+
+
+<h1 class="text-center">
+  <i class="ni ni-bus-front-12 text-primary"></i> Alocações
+</h1>
+<br />
+<!-- Nav tabs -->
+<ul class="nav nav-tabs justify-content-center">
+  <li class="nav-item">
+    <a class="nav-link active" data-toggle="tab" href="#menuHistorico"
+      ><i class="fas fa-info-circle"></i> Histórico de Alocações</a
+    >
+  </li>
+  @if (SignInManager.IsSignedIn(User)) {
+  <li class="nav-item">
+    <a class="nav-link" data-toggle="tab" href="#menuCadastro">
+      <i class="fas fa-plus-circle text-success"></i> Cadastro de Alocação</a
+    >
+  </li>
+  }
+</ul>
+
+<!-- Tab panes -->
+<div class="tab-content">
+  <div id="menuHistorico" class="container tab-pane active">
+    <br />
+    <table class="table table-striped data-table" id="tbALocacoes">
+      <thead class="thead-dark">
+        <tr>
+          <th class="text-secondary">Data da operação</th>
+          @if (SignInManager.IsSignedIn(User)) {
+          <th class="text-secondary">Feito por</th>
+          }
+          <th class="text-secondary">Operação</th>
+          <th class="text-secondary">Funcionário</th>
+          <th class="text-secondary">Cliente</th>
+          <th class="text-secondary">Código da Vaga</th>
+          
+        </tr>
+      </thead>
+      <tbody>
+        @foreach (Alocacao alocacao in Model.Alocacoes) {
+        <tr>
+          <td>@alocacao.data_operacao</td>
+          @if (SignInManager.IsSignedIn(User)) {
+          <td>@alocacao.username</td>
+          }
+          <td>@alocacao.operacao</td>
+          <td><a asp-controller="Funcionarios" asp-action="Funcionario" asp-route-id="@alocacao.funcionario.id" target="_blank">@alocacao.funcionario.nome</a></td>
+          <td>@alocacao.vaga.projeto</td>
+          <td><a asp-controller="Vagas" asp-action="Vaga" asp-route-id="@alocacao.vaga.id" target="_blank">@alocacao.vaga.codigoVaga</a></td>
+          
+        </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div id="menuCadastro" class="container tab-pane fade">
+    <br />
+    @if (SignInManager.IsSignedIn(User)) {
+    <div id="accordion">
+      <div class="card">
+        <div class="card-header" id="headingOne">
+          <h5 class="mb-0">
+            <button
+              class="btn btn-link"
+              data-toggle="collapse"
+              data-target="#collapseVagas"
+              aria-expanded="true"
+              aria-controls="collapseVagas"
+            >
+              <i class="fas fa-plus-circle"></i> Selecione a Vaga
+            </button>
+          </h5>
+        </div>
+
+        <div
+          id="collapseVagas"
+          class="collapse"
+          aria-labelledby="headingOne"
+          data-parent="#accordion"
+        >
+          <div class="card-body">
+            <partial
+              name="../Vagas/_ListarVaga.cshtml"
+              model="Model.Vagas"
+              view-data="@partialParameters"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="vaga-selecionada" style="display: none">
+      <h2><i class="ni ni-briefcase-24 text-primary"></i> Vaga selecionada</h2>
+      <hr />
+      <div class="form-group">
+        <label for="CodigoVaga">Código da Vaga</label>
+        <input
+          readonly
+          type="text"
+          id="CodigoVaga"
+          name="CodigoVaga"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label for="ProjetoVaga">Projeto</label>
+        <input
+          readonly
+          type="text"
+          id="ProjetoVaga"
+          name="ProjetoVaga"
+          class="form-control"
+        />
+      </div>
+
+      <div class="form-group">
+        <label>Tecnologias</label>
+        <div id="tecnologias-vaga" class="d-flex flex-row"></div>
+      </div>
+
+      <form
+        asp-controller="Alocacao"
+        asp-action="Vaga"
+        method="GET"
+        class="form"
+      >
+        <div class="form-group">
+          <input type="hidden" asp-for="VagaId" />
+          <span asp-validation-for="VagaId" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-info btn-block">
+          Alocar Funcionários
+        </button>
+      </form>
+    </div>
+    }
+  </div>
+</div>
+
+
+
+
+
+
+@section Scripts{
+  <partial name="../../Areas/Identity/Pages/_ValidationScriptsPartial.cshtml" />
+    <script src="~/js/data-table.js"></script>
+
+    <script type="module" src="~/js/seleciona-vaga.js"></script>
+
+    <script>
+      $.validator.setDefaults({ 
+      ignore: [],
+      });
+    </script>
+}

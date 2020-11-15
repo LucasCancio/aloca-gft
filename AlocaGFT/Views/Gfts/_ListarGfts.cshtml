@@ -1,0 +1,36 @@
+@model IList<AlocaGFT.Models.Gft>
+@{
+    bool selecionar = ViewData["selecionar"] != null && Convert.ToBoolean(ViewData["selecionar"]);
+}
+
+<table class="table table-striped data-table">
+    <thead class="thead-dark">
+        <tr>
+            <th class="text-secondary">Nome</th>
+            <th class="text-secondary">Telefone</th>
+            <th class="text-secondary">Cep</th>
+            <th class="text-secondary">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var gft in Model)
+        {
+            <tr>
+                <td>@gft.nome</td>
+                <td>@gft.telefone</td>
+                <td>@gft.endereco.cep</td>
+                <td>
+                    @if (selecionar)
+                    {
+                        <button type="button" class="btn btn-info btn-selecionar" gft-id="@gft.id">Selecionar</button>
+                    }
+                    else
+                    {
+                        <a asp-controller="Gfts" asp-action="Gft" asp-route-id="@gft.id">Editar</a>
+                        <a asp-controller="Gfts" asp-action="Deletar" asp-route-id="@gft.id">Deletar</a>
+                    }
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

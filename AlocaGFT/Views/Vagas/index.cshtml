@@ -1,0 +1,15 @@
+@model IList<AlocaGFT.ViewModels.VagaViewModel>
+@{
+    ViewData["Title"] = "Vagas";
+}
+
+<div class="d-flex justify-content-center">
+    <h1 class="text-center ml-auto"><i class="ni ni-briefcase-24 text-primary"></i> Vagas em Aberto</h1>
+    <a asp-controller="Vagas" asp-action="Cadastrar" class="btn btn-success ml-auto rounded-circle"> <i class="fas fa-plus"></i></a>
+</div>
+<hr>
+<partial name="./_ListarVaga.cshtml" model="Model" />   
+
+@section Scripts{
+    <script src="~/js/data-table.js"></script>
+}

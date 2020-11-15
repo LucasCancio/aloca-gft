@@ -1,0 +1,150 @@
+@model AlocaGFT.ViewModels.Alocacao.VagaAlocacaoViewModel
+
+@{
+  var partialParameters= new ViewDataDictionary(ViewData) { { "selecionar", true },{"versaoCurta", true} };
+}
+
+<h1 class="text-center"><i class="ni ni-bus-front-12 text-primary"></i> Alocação na Vaga</h1>
+<hr>
+
+<div id="accordion">
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseVaga" aria-expanded="true" aria-controls="collapseVaga">
+         <i class="ni ni-briefcase-24 text-primary"></i>  Detalhes da Vaga
+        </button>
+      </h5>
+    </div>
+
+    <div id="collapseVaga" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+            <div class="form-group">
+                <label asp-for="Vaga.CodigoVaga"></label>
+                <input readonly asp-for="Vaga.CodigoVaga" class="form-control">
+          </div>
+          <div class="form-group">
+                  <label asp-for="Vaga.Projeto"></label>
+                  <input readonly asp-for="Vaga.Projeto" class="form-control">
+          </div>
+          <div class="form-group">
+                  <label asp-for="Vaga.Descricao"></label>
+                  <textarea readonly asp-for="Vaga.Descricao" class="form-control"></textarea>
+          </div>
+
+          <div class="form-group">
+                  <label asp-for="Vaga.QtdVaga"></label>
+                  <input readonly asp-for="Vaga.QtdVaga" class="form-control">
+          </div>
+
+          <div class="form-group">
+            <label>Tecnologias</label>
+            <p>
+            @foreach (var tecnologia in Model.Vaga.TecnologiasDaVaga)
+            {
+                <span class="mr-3"> <img src="@tecnologia.imageSource" alt="@tecnologia.nome" style="max-height: 40px;"> </span>
+            }
+            </p>
+          </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="headingOne">
+      <h5 class="mb-0">
+        <button class="btn btn-link" data-toggle="collapse" data-target="#collapseFuncs" aria-expanded="true" aria-controls="collapseFuncs">
+          <i class="fas fa-plus-circle"></i> Selecione os funcionários para alocar
+        </button>
+      </h5>
+    </div>
+
+    <div id="collapseFuncs" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
+      <div class="card-body">
+        <partial name="../Funcionarios/_ListarFunc.cshtml" model="Model.FuncionariosEmWA" view-data='@partialParameters' />  
+        <button type="button" class="btn btn-primary mx-auto" id="btnAplicarFuncionarios">Selecionar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="divFuncionariosSelect">
+<span asp-validation-for="Vaga.QtdVaga" class="text-danger"></span>
+<br />
+<h2><i class="ni ni-circle-08 text-primary"></i> Funcionários Selecionados</h2>
+<h5 class="text-muted"><i class="fas fa-question-circle"></i> Caso o funcionário já esteja alocado, ele não sera alocado novamente se 'aplicar'</h5>
+<hr>
+
+<form asp-controller="Alocacao" asp-action="AlocarEmVaga" method="POST" class="form">
+  <input type="hidden" asp-for="Vaga.Id"/>
+  <input type="hidden" asp-for="Vaga.QtdVaga"/>
+
+  <table class="table table-striped" id="tbFuncionariosSelect">
+    <thead class="thead-dark">
+        <tr>
+            <th class="text-secondary">Nome</th>
+            <th class="text-secondary">Matricula</th>
+            <th class="text-secondary">Tecnologias</th>
+            <th class="text-secondary">Cargo</th>
+            <th class="text-secondary">Gft</th>
+            <th class="text-secondary">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+      @for (int i = 0; i < Model.FuncionariosAlocados.Count; i++)
+      {
+        var funcionario = Model.FuncionariosAlocados[i];
+
+         <tr class="func-row">
+                <td>
+                  <b>(JÁ ALOCADO)</b>
+                  <input type="hidden" class="func-id" func-id="@funcionario.Id" name="FuncionariosAlocados[@i].Id" value="@funcionario.Id"/>
+                  <span class="func-nome">@funcionario.Nome</span>
+                </td>
+                <td class="func-matricula">@funcionario.Matricula</td>
+                <td>
+                    @foreach (var tecnologia in funcionario.TecnologiasDoFunc)
+                    {
+                         <img class="func-tec" src="@tecnologia.imageSource" alt="@tecnologia.nome" style="max-height: 40px;">
+                    }
+                </td>
+                <td class="func-cargo">@funcionario.Cargo?.nome</td>
+                <td class="func-gft">@funcionario.Gft?.nome</td>
+                <td>
+                    <button type="button" class="btn btn-danger btn-cancelar" func-id="@funcionario.Id"><i class="fas fa-exclamation-triangle"></i> Desalocar</button>
+                </td>
+            </tr>
+      }
+    </tbody>
+</table>
+ <button type="submit" class="btn btn-info btn-block">Aplicar</button>
+</form>
+</div>
+
+@* @section Modals{
+  <div class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Gostaria de desalocar </p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+}
+ *@
+
+@section Scripts{
+    <script src="~/js/data-table.js"></script>
+
+    <script type="module" src="~/js/seleciona-funcionario.js"></script>
+}

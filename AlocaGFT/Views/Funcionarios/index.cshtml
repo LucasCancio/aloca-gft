@@ -1,0 +1,15 @@
+@model IList<AlocaGFT.ViewModels.FuncionarioViewModel>
+@{
+    ViewData["Title"] = "Funcionários";
+}
+<div class="d-flex justify-content-center">
+    <h1 class="text-center ml-auto"><i class="ni ni-circle-08 text-primary"></i> Funcionários em WA</h1>
+    <a asp-controller="Funcionarios" asp-action="Funcionario" class="btn btn-success ml-auto rounded-circle"> <i class="fas fa-plus"></i></a>
+</div>
+<hr>
+
+<partial name="./_ListarFunc.cshtml" model="Model" />  
+
+@section Scripts{
+    <script src="~/js/data-table.js"></script>
+}

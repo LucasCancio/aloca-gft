@@ -1,0 +1,63 @@
+@model AlocaGFT.ViewModels.TecnologiaViewModel
+@{
+    var titulo = Model != null && Model.HasId ? "Detalhes da tecnologia" : "Cadastro de tecnologia";
+    ViewData["Title"] = titulo;
+}
+<h1 class="text-center"><i class="fas fa-rocket text-primary"></i> @titulo</h1>
+<hr>
+<form asp-controller="Tecnologias" asp-action="Salvar" class="form" method="POST" enctype="multipart/form-data">
+    <input asp-for="Id" type="hidden" value="@(Model?.Id?? 0)">
+
+    <input type="hidden" asp-for="ImageName" />
+
+    <div class="form-group">
+        <label asp-for="Nome"></label>
+        <input asp-for="Nome" class="form-control">
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    
+    <div class="form-group">
+        <label asp-for="Image" class="control-label"></label>  
+        <div class="custom-file">  
+            <input asp-for="Image" style="visibility: hidden;" class="custom-file-input">  
+            <label class="custom-file-label" asp-for="Image">Escolha um arquivo</label>  
+        </div>  
+        <span asp-validation-for="Image" class="text-danger"></span>  
+        <img class="rounded mx-auto d-block" id="tec-image" style="max-height: 100px;" src="@(Model!=null? Model.ImageSource : null )"/>
+    </div>
+
+
+    <button type="submit" class="btn btn-primary btn-block">@(Model != null && Model.HasId? "Salvar" :
+                "Cadastrar")</button>
+</form>
+
+@section Scripts { 
+        <script src="~/lib/jquery-validation/dist/jquery.validate.min.js"></script>
+
+        <script type="text/javascript">  
+        $(".custom-file-input").on("change", function () {  
+            var fileName = $(this).val().split("\\").pop();  
+            $(this).siblings(".custom-file-label").addClass("selected").html(fileName);  
+        });  
+
+          $('#Image').change(function(){
+            var input = this;
+            var url = $(this).val();
+            var ext = url.substring(url.lastIndexOf('.') + 1).toLowerCase();
+            if (input.files && input.files[0]&& (ext == "gif" || ext == "png" || ext == "jpeg" || ext == "jpg")) 
+             {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                   $('#tec-image').attr('src', e.target.result);
+                }
+               reader.readAsDataURL(input.files[0]);
+            }
+         });
+
+         
+    </script>  
+
+    <partial name="../../Areas/Identity/Pages/_ValidationScriptsPartial.cshtml" />
+}

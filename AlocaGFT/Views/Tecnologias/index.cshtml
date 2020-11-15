@@ -1,0 +1,15 @@
+@model IList<AlocaGFT.Models.Tecnologia>
+@{
+    ViewData["Title"] = "Tecnologias";
+}
+
+<div class="d-flex justify-content-center">
+    <h1 class="text-center ml-auto"><i class="fas fa-rocket text-primary"></i> Tecnologias</h1>
+    <a asp-controller="Tecnologias" asp-action="Tecnologia" class="btn btn-success ml-auto rounded-circle"> <i class="fas fa-plus"></i></a>
+</div>
+<hr>
+<partial name="./_ListarTecnologias.cshtml" model="Model" />  
+
+@section Scripts{
+    <script src="~/js/data-table.js"></script>
+}

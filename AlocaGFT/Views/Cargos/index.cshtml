@@ -1,0 +1,16 @@
+@model IList<AlocaGFT.Models.Cargo>
+@{
+    ViewData["Title"] = "Cargos";
+}
+
+<div class="d-flex justify-content-center">
+    <h1 class="text-center ml-auto"><i class="ni ni-badge text-primary"></i> Cargos</h1>
+    <a asp-controller="Cargos" asp-action="Cargo" class="btn btn-success ml-auto rounded-circle"> <i class="fas fa-plus"></i></a>
+</div>
+
+<hr>
+<partial name="./_ListarCargos.cshtml" model="Model" />  
+
+@section Scripts{
+    <script src="~/js/data-table.js"></script>
+}

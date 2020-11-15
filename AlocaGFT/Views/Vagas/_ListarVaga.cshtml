@@ -1,0 +1,64 @@
+@model IList<AlocaGFT.ViewModels.VagaViewModel>
+@{
+    bool selecionar = ViewData["selecionar"] != null && Convert.ToBoolean(ViewData["selecionar"]);
+    bool versaoCurta = ViewData["versaoCurta"] != null && Convert.ToBoolean(ViewData["versaoCurta"]);
+}
+
+<table class="table table-striped data-table">
+    <thead class="thead-dark">
+        <tr>
+            <th class="text-secondary">Código da vaga</th>
+            <th class="text-secondary">Projeto</th>
+            <th class="text-secondary">Abertura</th>
+            @if (!versaoCurta)
+            {
+                <th class="text-secondary">Tecnologias</th>
+                <th class="text-secondary">Home Office</th>
+            }
+            <th class="text-secondary">Qtd de Vagas</th>
+            <th class="text-secondary">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var vaga in Model)
+        {
+            <tr>
+                <td>@vaga.CodigoVaga</td>
+                <td>@vaga.Projeto</td>
+                <td>@vaga.Abertura.Value.ToShortDateString()</td>
+                @if (!versaoCurta)
+                {
+                    <td>
+                    @foreach (var tecnologia in vaga.TecnologiasDaVaga)
+                    {
+                        <img src="@tecnologia.imageSource" alt="@tecnologia.nome" style="max-height: 40px;">
+                        <p style="display: none;">@tecnologia.nome</p>
+                    }
+                    </td>
+                    <td>
+                        @if (vaga.HomeOffice)
+                        {
+                            <i class="fas fa-home text-primary" style="font-size: 1.6rem;"></i>
+                        }
+                        else
+                        {
+                            <i class="fas fa-times text-danger" style="font-size: 1.6rem;"></i>
+                        }
+                    </td>
+                }
+                <td>@vaga.QtdVaga</td>
+                <td>
+                    @if (selecionar)
+                    {
+                        <button type="button" class="btn btn-info btn-selecionar-vaga" vaga-id="@vaga.Id">Selecionar</button>
+                    }
+                    else
+                    {
+                        <a asp-controller="Vagas" asp-action="Vaga" asp-route-id="@vaga.Id">Editar</a>
+                        <a asp-controller="Vagas" asp-action="Deletar" asp-route-id="@vaga.Id">Deletar</a>
+                    }
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

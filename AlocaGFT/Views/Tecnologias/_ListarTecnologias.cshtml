@@ -1,0 +1,40 @@
+@model IList<AlocaGFT.Models.Tecnologia>
+@{
+    bool selecionar = ViewData["selecionar"] != null && Convert.ToBoolean(ViewData["selecionar"]);
+}
+
+<table class="table table-striped data-table">
+    <thead class="thead-dark">
+        <tr>
+            <th class="text-secondary">Nome</th>
+            <th class="text-secondary">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var tecnologia in Model)
+        {
+            <tr>
+                <td>
+                    <div class="media align-items-center">
+                        <a href="#" class="avatar rounded-circle mr-3">
+                            <img src="@tecnologia.imageSource" alt="@tecnologia.nome">
+                        </a>
+                        <div class="media-body">
+                            <span class="name mb-0 text-sm">@tecnologia.nome</span>
+                        </div>
+                    </div>
+                <td>
+                    @if (selecionar)
+                        {
+                        <button type="button" class="btn btn-info btn-selecionar" tec-id="@tecnologia.id">Selecionar</button>
+                        }
+                        else
+                        {
+                        <a asp-controller="Tecnologias" asp-action="Tecnologia" asp-route-id="@tecnologia.id">Editar</a>
+                        <a asp-controller="Tecnologias" asp-action="Deletar" asp-route-id="@tecnologia.id">Deletar</a>
+                        }
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>

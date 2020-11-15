@@ -1,0 +1,150 @@
+@model AlocaGFT.ViewModels.VagaViewModel
+@{
+    List<Tecnologia> tecnologias= (List<Tecnologia>) ViewData["tecnologias"];
+
+    var titulo = "Cadastro de vaga";
+
+    List<Tecnologia> tecnologiasDaVaga= new List<Tecnologia>();
+
+    if(Model != null && Model.HasId){
+      titulo="Detalhes da vaga";
+      tecnologiasDaVaga= tecnologias.Where(tec=> Model.TecnologiaIds.Contains(tec.id)).ToList();
+    }
+
+    ViewData["Title"] = titulo;
+
+    var tecnologiaPartialViewModel= new AlocaGFT.ViewModels.PartialTecnologiaViewModel(){
+        TecnologiasCadastradas= tecnologias,
+        TecnologiasDaEntidade= tecnologiasDaVaga
+    };
+}
+
+<h1 class="text-center"><i class="ni ni-briefcase-24 text-primary"></i> @titulo</h1>
+<hr>
+<form asp-controller="Vagas" asp-action="Salvar" class="form" method="POST">
+    <input asp-for="Id" type="hidden" value="@(Model?.Id?? 0)">
+
+    <div class="form-group">
+        <label asp-for="Projeto"></label>
+        <input asp-for="Projeto" class="form-control">
+        <span asp-validation-for="Projeto" class="text-danger"></span>
+    </div>
+
+      <div class="form-group">
+        <label asp-for="Descricao"></label>
+        <textarea asp-for="Descricao" class="form-control">
+        </textarea>
+        <span asp-validation-for="Descricao" class="text-danger"></span>
+    </div>
+
+      <div class="form-group">
+        <label asp-for="Abertura"></label>
+        <input  type="date" asp-for="Abertura" asp-format="{0:yyyy-MM-dd}" class="form-control">
+        <span asp-validation-for="Abertura" class="text-danger"></span>
+    </div>
+
+      <div class="form-group">
+        <label asp-for="QtdVaga"></label>
+        <input min="0" asp-for="QtdVaga" class="form-control">
+        <span asp-validation-for="QtdVaga" class="text-danger"></span>
+    </div>
+
+    <div class="form-check form-group">
+        <input asp-for="HomeOffice" class="form-check-input">
+        <label asp-for="HomeOffice" class="form-check-label">Home Office</label>
+        <span asp-validation-for="HomeOffice" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CodigoVaga"></label>
+        <input asp-for="CodigoVaga" class="form-control">
+        <span asp-validation-for="CodigoVaga" class="text-danger"></span>
+    </div>
+
+    <span asp-validation-for="TecnologiaIds" class="text-danger"></span>
+
+    <partial name="~/Views/PartialViews/_Tecnologia.cshtml" model="tecnologiaPartialViewModel" />   
+
+    @if(Model != null && Model.FuncionariosAlocados != null){
+        <div id="accordion2">
+    <div class="card">
+        <div class="card-header" id="headingOne">
+            <h5 class="mb-0">
+                <button type="button" class="btn btn-link" data-toggle="collapse" data-target="#collapseFuncionarios"
+                    aria-expanded="true" aria-controls="collapseFuncionarios">
+                    <i class="ni ni-circle-08"></i> Funcionarios Alocados
+                </button>
+            </h5>
+        </div>
+
+        <div id="collapseFuncionarios" class="collapse" aria-labelledby="headingOne" data-parent="#accordion2">
+            <div class="card-body">
+                <table class="table table-striped data-table" id="tbFuncionariosSelect">
+                    <thead class="thead-dark">
+                            <tr>
+                                <th class="text-secondary">Nome</th>
+                                <th class="text-secondary">Matricula</th>
+                                <th class="text-secondary">Cargo</th>
+                                <th class="text-secondary">Gft</th>
+                            </tr>
+                    </thead>
+                    <tbody>
+                            @foreach (var funcionario in Model.FuncionariosAlocados)
+                            {
+                                 <tr class="func-row">
+                                    <td><span class="func-nome">@funcionario.nome</span></td>
+                                    <td class="func-matricula">@funcionario.matricula</td>
+                                    <td class="func-cargo">@funcionario.cargo?.nome</td>
+                                    <td class="func-gft">@funcionario.gft?.nome</td>
+                                </tr>
+                            }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+    }
+    
+
+
+    
+
+
+    <button type="submit" class="btn btn-primary btn-block">@(Model != null && Model.HasId? "Salvar" :
+                "Cadastrar")</button>
+</form>
+
+@section Scripts{
+    <script src="~/js/data-table.js"></script>
+    <script src="~/js/tecnologia-partial.js"></script>
+
+    <script>
+        $(document).ready(function () {
+             $('#Projeto, #Abertura, #CodigoVaga').change(function(){
+                 let codigoVaga= $("#CodigoVaga").val();
+                 if(!codigoVaga){
+                     let dataAbertura = $('#Abertura').val()
+                     const projeto = $('#Projeto').val();
+
+                     if(dataAbertura && projeto){
+                         const anoAbertura = dataAbertura.substring(0,4);
+                         const mesAbertura = dataAbertura.substring(5,7);
+
+                         let iniciais= projeto;
+                         if(projeto.length > 4){
+                             iniciais = projeto.substring(0,4);
+                         }
+                         $('#CodigoVaga').val(`#${iniciais.toUpperCase()}-${anoAbertura}-${mesAbertura}`);
+                     }
+                 }
+                 
+
+
+             });
+        });
+        
+    </script>
+    
+    <partial name="../../Areas/Identity/Pages/_ValidationScriptsPartial.cshtml" />
+}

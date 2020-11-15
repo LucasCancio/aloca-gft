@@ -1,0 +1,86 @@
+@model AlocaGFT.ViewModels.FuncionarioViewModel
+@{
+    List<Cargo> cargos= (List<Cargo>) ViewData["cargos"];
+    List<Gft> gfts= (List<Gft>) ViewData["gfts"];
+    List<Tecnologia> tecnologias= (List<Tecnologia>) ViewData["tecnologias"];
+
+    var cargosOptions = new SelectList(cargos, "id", "nome");
+    var gftsOptions = new SelectList(gfts, "id", "nome");
+    var tecnologiasOptions = new SelectList(tecnologias, "id", "nome");
+
+    List<Tecnologia> tecnologiasDoFuncionario= new List<Tecnologia>();
+
+    var titulo = "Cadastro de funcionário";
+    if(Model != null && Model.HasId){
+        titulo= "Detalhes do funcionário";
+        tecnologiasDoFuncionario= tecnologias.Where(tec=> Model.TecnologiaIds.Contains(tec.id)).ToList();
+    }
+
+    ViewData["Title"] = titulo;
+
+    var tecnologiaPartialViewModel= new AlocaGFT.ViewModels.PartialTecnologiaViewModel(){
+        TecnologiasCadastradas= tecnologias,
+        TecnologiasDaEntidade= tecnologiasDoFuncionario
+    };
+}
+
+<h1 class="text-center"><i class="ni ni-circle-08 text-primary"></i> @titulo</h1>
+<hr>
+<form asp-controller="Funcionarios" asp-action="Salvar" class="form" method="POST" id="formFuncionario">
+    <input asp-for="Id" type="hidden" value="@(Model?.Id ?? 0)">
+
+    <div class="form-group">
+        <label asp-for="Nome"></label>
+        <input asp-for="Nome" class="form-control">
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Matricula"></label>
+        <input asp-for="Matricula" class="form-control">
+        <span asp-validation-for="Matricula" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Inicio_wa"></label>
+        <input type="date" asp-for="Inicio_wa" asp-format="{0:yyyy-MM-dd}" class="form-control">
+        <span asp-validation-for="Inicio_wa" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Termino_wa"></label>
+        <input type="date" asp-for="Termino_wa" asp-format="{0:yyyy-MM-dd}" class="form-control">
+        <span asp-validation-for="Termino_wa" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CargoId"></label>
+        <select asp-for="CargoId" asp-items="@cargosOptions" class="form-control">
+            <option disabled selected>--- SELECIONE ---</option>
+        </select>
+        <span asp-validation-for="CargoId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="GftId"></label>
+        <select asp-for="GftId" asp-items="@gftsOptions" class="form-control">
+            <option disabled selected>--- SELECIONE ---</option>
+        </select>
+        <span asp-validation-for="GftId" class="text-danger"></span>
+    </div>
+
+    
+    <span asp-validation-for="TecnologiaIds" class="text-danger"></span>
+    <partial name="~/Views/PartialViews/_Tecnologia.cshtml" model="tecnologiaPartialViewModel" />   
+
+    <button type="submit" class="btn btn-primary btn-block">@(Model != null && Model.HasId? "Salvar" :
+                "Cadastrar")</button>
+</form>
+
+@section Scripts{
+    <script src="~/js/tecnologia-partial.js"></script>
+
+    <script src="~/js/date-wa.js"></script> 
+
+    <partial name="../../Areas/Identity/Pages/_ValidationScriptsPartial.cshtml" />
+}

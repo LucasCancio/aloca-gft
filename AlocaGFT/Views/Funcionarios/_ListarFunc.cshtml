@@ -1,0 +1,55 @@
+@model IList<AlocaGFT.ViewModels.FuncionarioViewModel>
+@{
+    bool selecionar = ViewData["selecionar"] != null && Convert.ToBoolean(ViewData["selecionar"]);
+    bool versaoCurta = ViewData["versaoCurta"] != null && Convert.ToBoolean(ViewData["versaoCurta"]);
+}
+
+<table class="table table-striped data-table">
+    <thead class="thead-dark">
+        <tr>
+            <th class="text-secondary">Nome</th>
+            <th class="text-secondary">Cargo</th>
+            @if (!versaoCurta)
+            {
+                @* <th class="text-secondary">Vaga</th> *@
+                <th class="text-secondary">Gft</th>
+            }
+            <th class="text-secondary">Tecnologias</th>
+            <th class="text-secondary">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var funcionario in Model)
+        {
+            <tr>
+                <td>@funcionario.Nome</td>
+                <td><span>@funcionario.Cargo?.nome</span></td>
+                @if (!versaoCurta)
+                {
+                    @* <td>@(string.IsNullOrEmpty(funcionario.VagaCod)? "Nenhuma" : funcionario.VagaCod)</td> *@
+                    <td>@funcionario.Gft?.nome</td>
+                }
+                <td>
+                    @foreach (var tecnologia in funcionario.TecnologiasDoFunc)
+                    {
+                        <img src="@tecnologia.imageSource" alt="@tecnologia.nome" style="max-height: 40px;">
+                        <p style="display: none;">@tecnologia.nome</p>
+                    }
+                </td>
+                <td>
+                    @if (selecionar)
+                    {
+                        <input type="checkbox" name="func-@funcionario.Id" class="btn btn-info btn-selecionar-func"
+                            func-id="@funcionario.Id">
+                    }
+                    else
+                    {
+                        <a asp-controller="Funcionarios" asp-action="Funcionario" asp-route-id="@funcionario.Id">Editar</a>
+                        <a asp-controller="Funcionarios" asp-action="Deletar" asp-route-id="@funcionario.Id">Deletar</a>
+                    }
+
+                    </td>
+                </tr>
+        }
+    </tbody>
+</table>
