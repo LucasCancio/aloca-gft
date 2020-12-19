@@ -1,2 +1,0 @@
-Funcionario =  termino_wa -> prazo maximo de ficar em wa (15 dias)
-Data de inicio + 15 dias

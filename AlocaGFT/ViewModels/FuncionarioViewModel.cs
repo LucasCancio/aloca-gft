@@ -21,8 +21,8 @@ namespace AlocaGFT.ViewModels
         public DateTime? Inicio_wa { get; set; } = DateTime.Today;
 
         [Required(ErrorMessage = "O campo {0} é obrigatório!")]
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true, NullDisplayText = "Data inválida")]
         [Display(Name = "Data de término WA")]
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true, NullDisplayText = "Data inválida")]
         public DateTime? Termino_wa { get; set; } = DateTime.Today.AddDays(15);
 
         [Required(ErrorMessage = "O campo {0} é obrigatório!")]

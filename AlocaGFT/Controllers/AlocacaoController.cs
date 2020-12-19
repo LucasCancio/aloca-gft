@@ -44,8 +44,9 @@ namespace AlocaGFT.Controllers
         public IActionResult Index()
         {
             var alocacoes = _alocacaoRepository.GetTodosAtivos();
-            alocacoes.ForEach(alocacao =>
+            alocacoes.ForEach( (alocacao) =>
             {
+                //var user = await _userManager.FindByIdAsync(alocacao.applicationUserId);
                 alocacao.username = _userManager.GetUserName(User);
             });
 
